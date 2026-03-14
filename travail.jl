@@ -75,20 +75,24 @@ function simulation(transitions, states; generations=500, stochastic=false)
 end
 
 # States
-# Barren, Grass, Shrubs
-s = [100, 0, 0]
+# Barren, Grass, Shrub_1, Shrub_2
+s = [100, 0, 0, 0]
 states = length(s)
 patches = sum(s)
 
 # Transitions
 T = zeros(Float64, states, states)
-T[1, :] = [110, 8, 0]
-T[2, :] = [2, 120, 3]
-T[3, :] = [1, 0, 94]
+T[1, :] = [110, 8, 0, 0]
+T[2, :] = [2, 120, 3, 3]
+T[3, :] = [1, 0, 94, 94]
+T[4, :] = [1, 0, 80, 105]
 T
 
-states_names = ["Barren", "Grasses", "Shrubs"]
-states_colors = [:grey40, :orange, :teal]
+println("Somme de chaque ligne :")
+println(sum(T, dims=2))
+
+states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"]
+states_colors = [:grey40, :orange, :teal, :blue]
 
 # Simulations
 
