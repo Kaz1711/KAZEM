@@ -6,10 +6,10 @@
 #      prenom: Kazem
 #      matricule: 20232897
 #      github: https://github.com/Kaz1711/KAZEM
-#    - nom: Auteur
-#      prenom: Deuxième
-#      matricule: XXXXXXXX
-#      github: DeuxiAut
+#    - nom: Nivelle
+#      prenom: Anna
+#      matricule: 20349280
+#      github: anna2808-prog
 # ---
 
 # # Introduction
