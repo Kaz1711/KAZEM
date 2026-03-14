@@ -1,5 +1,5 @@
 # ---
-# title: Titre du travail
+# title: Simulation de la végétation d’un corridor sous ligne électrique
 # repository: tpoisot/BIO245-modele
 # auteurs:
 #    - nom: Mouchaimech
@@ -76,16 +76,16 @@ end
 
 # States
 # Barren, Grass, Shrub_1, Shrub_2
-s = [100, 0, 0, 0]
+s = [150, 0, 25, 25]
 states = length(s)
 patches = sum(s)
 
 # Transitions
 T = zeros(Float64, states, states)
-T[1, :] = [110, 8, 0, 0]
-T[2, :] = [2, 120, 3, 3]
-T[3, :] = [1, 0, 94, 94]
-T[4, :] = [1, 0, 80, 105]
+T[1, :] = [80, 30, 0, 0] # vide reste souvent vide ou devient herbe
+T[2, :] = [2, 70, 10, 10] # herbe peut devenir buisson
+T[3, :] = [1, 0, 85, 0] # les buissons sont stables
+T[4, :] = [1, 0, 0, 85] # les buissons sont stables
 T
 
 println("Somme de chaque ligne :")
