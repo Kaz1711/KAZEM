@@ -5,7 +5,7 @@
 #    - nom: Mouchaimech
 #      prenom: Kazem
 #      matricule: 20232897
-#      github: https://github.com/Kaz1711/KAZEM
+#      github: Kaz1711
 #    - nom: Nivelle
 #      prenom: Anna
 #      matricule: 20349280
@@ -25,12 +25,13 @@
 # # Présentation du modèle
 
 # # Implémentation
+# ## Packages nécessaires
 using CairoMakie
 using Distributions
 
 import Random
 Random.seed!(2045)
-
+# ## Fonctions
 function check_transition_matrix!(T)
     for ligne in axes(T, 1)
         if sum(T[ligne, :]) != 1
@@ -82,18 +83,18 @@ function simulation(transitions, states; generations=500, stochastic=false)
     return timeseries
 end
 
-# States
-# Barren, Grass, Shrub_1, Shrub_2
-s = [150, 0, 25, 25]
+# ## States
+# ## Barren, Grass, Shrub_1, Shrub_2
+s = [150, 20, 10, 10]
 states = length(s)
 patches = sum(s)
 
-# Transitions
+# ## Transitions
 T = zeros(Float64, states, states)
-T[1, :] = [80, 30, 0, 0] # vide reste souvent vide ou devient herbe
-T[2, :] = [2, 70, 10, 10] # herbe peut devenir buisson
-T[3, :] = [1, 0, 85, 0] # les buissons sont stables
-T[4, :] = [1, 0, 0, 85] # les buissons sont stables
+T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide ou devient herbe
+T[2, :] = [0.12, 0.82, 0.03, 0.03] # herbe peut devenir buisson
+T[3, :] = [0.09, 0.02, 0.87, 0.02] # les buissons sont stables
+T[4, :] = [0.09, 0.02, 0.02, 0.87] # les buissons sont stables
 T
 
 println("Somme de chaque ligne :")
@@ -102,12 +103,12 @@ println(sum(T, dims=2))
 states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"]
 states_colors = [:grey40, :orange, :teal, :blue]
 
-# Simulations
+# ##Simulations et presentation des résultats
 
 f = Figure()
 ax = Axis(f[1, 1], xlabel="Nb. générations", ylabel="Nb. parcelles")
 
-# Stochastic simulation
+# ##Stochastic simulation
 for _ in 1:100
     sto_sim = simulation(T, s; stochastic=true, generations=200)
     for i in eachindex(s)
@@ -115,40 +116,38 @@ for _ in 1:100
     end
 end
 
-# Deterministic simulation
+# ##Deterministic simulation
 det_sim = simulation(T, s; stochastic=false, generations=200)
 for i in eachindex(s)
     lines!(ax, det_sim[i, :], color=states_colors[i], alpha=1, label=states_names[i], linewidth=4)
 end
 
+
 axislegend(ax)
 tightlimits!(ax)
 current_figure()
 
-# ## Packages nécessaires
+# ## Verifications de l'équilibre
+success = 0
 
-import Random
-Random.seed!(123456)
-using CairoMakie
+for i in 1:100
+    
+    sim = simulation(T, s; stochastic=true, generations=200)
+    final = sim[:, end]
 
-# ## Une autre section
+    vegetation = final[2] + final[3] + final[4]
+    shrubs = final[3] + final[4]
 
-"""
-    foo(x, y)
+    cond1 = abs(vegetation-40) <= 5
+    cond2 = abs(final[2] - 12) <= 5
+    cond3 = min(final[3], final[4]) >= 0.3*shrubs
 
-Cette fonction ne fait rien.
-"""
-function foo(x, y)
-    ## Cette ligne est un commentaire
-    return nothing
+    if cond1 && cond2 && cond3
+        success += 1
+    end
 end
 
-# # Présentation des résultats
-
-# La figure suivante représente des valeurs aléatoires:
-
-hist(randn(100))
-
+println("Success rate = ", success/100)
 # # Discussion
 
 # On peut aussi citer des références dans le document `references.bib`,
