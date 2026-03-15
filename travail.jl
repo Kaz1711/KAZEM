@@ -13,7 +13,15 @@
 # ---
 
 # # Introduction
-
+# L'aménagement de corridors sous les lignes électriques nécessite un compromis
+# entre la sécurité et des infrastructures et le maintien de la biodiversité.
+# Une végétation trop haute représente un risque pour les lignes, alors qu'un 
+# corridor trop dégagé réduit la biodiversité. 
+# Dans ce travail, nous utilisons un modèle de transitions végétales pour simuler
+# l'évolution d'un corridor composé de 200 parcelles. le modèle permet d'évaluer 
+# si une intervention initiale permet d'atteindre les objectifs. 20% des parcelles
+# doivent être végétalisées, dont 30% herbes et 70% buissons. Et que la variété de
+# la moins abondante doit représenter au moins 30% des buissons. 
 # # Présentation du modèle
 
 # # Implémentation
