@@ -85,16 +85,16 @@ end
 
 # ## States
 # ## Barren, Grass, Shrub_1, Shrub_2
-s = [150, 20, 10, 10]
+s = [160, 12, 14, 14]
 states = length(s)
 patches = sum(s)
 
 # ## Transitions
 T = zeros(Float64, states, states)
-T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide ou devient herbe
-T[2, :] = [0.12, 0.82, 0.03, 0.03] # herbe peut devenir buisson
-T[3, :] = [0.09, 0.02, 0.87, 0.02] # les buissons sont stables
-T[4, :] = [0.09, 0.02, 0.02, 0.87] # les buissons sont stables
+T[1, :] = [1, 0, 0, 0] # vide reste souvent vide ou devient herbe
+T[2, :] = [0, 1, 0, 0] # herbe peut devenir buisson
+T[3, :] = [0, 0, 1, 0] # les buissons sont stables
+T[4, :] = [0, 0, 0, 1] # les buissons sont stables
 T
 
 println("Somme de chaque ligne :")
@@ -110,7 +110,7 @@ ax = Axis(f[1, 1], xlabel="Nb. générations", ylabel="Nb. parcelles")
 
 # ##Stochastic simulation
 for _ in 1:100
-    sto_sim = simulation(T, s; stochastic=true, generations=200)
+    local sto_sim = simulation(T, s; stochastic=true, generations=200)
     for i in eachindex(s)
         lines!(ax, sto_sim[i, :], color=states_colors[i], alpha=0.1)
     end
@@ -128,26 +128,25 @@ tightlimits!(ax)
 current_figure()
 
 # ## Verifications de l'équilibre
-success = 0
+function check_success(T, s)
+    success = 0
+    for i in 1:100
+        sim = simulation(T, s; stochastic=true, generations=200)
+        final = sim[:, end]
+        vegetation = final[2] + final[3] + final[4]
+        shrubs = final[3] + final[4]
+        cond1 = abs(vegetation-40) <= 5
+        cond2 = abs(final[2] - 12) <= 5
+        cond3 = min(final[3], final[4]) >= 0.3*shrubs
 
-for i in 1:100
-    
-    sim = simulation(T, s; stochastic=true, generations=200)
-    final = sim[:, end]
-
-    vegetation = final[2] + final[3] + final[4]
-    shrubs = final[3] + final[4]
-
-    cond1 = abs(vegetation-40) <= 5
-    cond2 = abs(final[2] - 12) <= 5
-    cond3 = min(final[3], final[4]) >= 0.3*shrubs
-
-    if cond1 && cond2 && cond3
+        if cond1 && cond2 && cond3
         success += 1
-    end
+        end
+     end
+     return success/100
 end
 
-println("Success rate = ", success/100)
+println("Success rate = ", check_success(T, s))
 # # Discussion
 
 # On peut aussi citer des références dans le document `references.bib`,
