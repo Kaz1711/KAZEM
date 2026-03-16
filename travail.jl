@@ -91,10 +91,10 @@ patches = sum(s)
 
 # ## Transitions
 T = zeros(Float64, states, states)
-T[1, :] = [1, 0, 0, 0] # vide reste souvent vide ou devient herbe
-T[2, :] = [0, 1, 0, 0] # herbe peut devenir buisson
-T[3, :] = [0, 0, 1, 0] # les buissons sont stables
-T[4, :] = [0, 0, 0, 1] # les buissons sont stables
+T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide ou devient herbe
+T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe peut devenir buisson
+T[3, :] = [0.125, 0.01, 0.845, 0.02] # les buissons sont stables
+T[4, :] = [0.125, 0.01, 0.02, 0.845] # les buissons sont stables
 T
 
 println("Somme de chaque ligne :")
@@ -125,7 +125,7 @@ end
 
 axislegend(ax)
 tightlimits!(ax)
-current_figure()
+display(f)
 
 # ## Verifications de l'équilibre
 function check_success(T, s)
