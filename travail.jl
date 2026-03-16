@@ -84,24 +84,26 @@ function simulation(transitions, states; generations=500, stochastic=false)
 end
 
 # ## States
+# ## ajouter un deuxième état de buisson pour avoior quatre états
 # ## Barren, Grass, Shrub_1, Shrub_2
-s = [175, 5, 10, 10]
+s = [175, 5, 10, 10] # un quatrième état de buisson est ajouté
 states = length(s)
 patches = sum(s)
 
 # ## Transitions
+# ## ajouter un quatrième ligne et colonne pour la matrice de transition pour le deuxième type de buisson
 T = zeros(Float64, states, states)
-T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide ou devient herbe
-T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe peut devenir buisson
-T[3, :] = [0.125, 0.01, 0.845, 0.02] # les buissons sont stables
-T[4, :] = [0.125, 0.01, 0.02, 0.845] # les buissons sont stables
+T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide avec une petite chance de devenir herbe ou buisson
+T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe reste souvent herbe avec une chance de devenir vide ou buisson
+T[3, :] = [0.125, 0.01, 0.845, 0.02] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type
+T[4, :] = [0.125, 0.01, 0.02, 0.845] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type 
 T
 
 println("Somme de chaque ligne :")
 println(sum(T, dims=2))
 
-states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"]
-states_colors = [:grey40, :orange, :teal, :blue]
+states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"] # ajouter le nom du deuxième type de buisson
+states_colors = [:grey40, :orange, :teal, :blue] #ajouter une couleur pour le deuxième type de buisson
 
 # ##Simulations et presentation des résultats
 
@@ -125,28 +127,29 @@ end
 
 axislegend(ax)
 tightlimits!(ax)
-display(f)
+display(f) # pour afficher la figure
 
 # ## Verifications de l'équilibre
 function check_success(T, s)
-    success = 0
+    # on definit une fraction de succès pour les simulations stochastiques
+    success = 0 
     for i in 1:100
         sim = simulation(T, s; stochastic=true, generations=200)
-        final = sim[:, end]
-        vegetation = final[2] + final[3] + final[4]
-        shrubs = final[3] + final[4]
-        cond1 = abs(vegetation-40) <= 5
-        cond2 = abs(final[2] - 12) <= 5
-        cond3 = min(final[3], final[4]) >= 0.3*shrubs
+        final = sim[:, end] # on regarde la composition du corridor à la fin de la simulation
+        vegetation = final[2] + final[3] + final[4] # on calcule la quantité de végétation totale
+        shrubs = final[3] + final[4] # on calcule la quantité de buissons totale
+        cond1 = abs(vegetation-40) <= 5 # on vérifie que la quantité de végétation est proche de 20% du corridor
+        cond2 = abs(final[2] - 12) <= 5 # on vérifie que la quantité d'herbe est proche de 6% du corridor
+        cond3 = min(final[3], final[4]) >= 0.3*shrubs # on vérifie que la variété de la moins abondante ne représente pas moins que 30% des buissons
 
-        if cond1 && cond2 && cond3
-        success += 1
+        if cond1 && cond2 && cond3 # si les trois conditions sont vérifiées, on considère que la simulation est un succès
+        success += 1 # on additionne 1 au nombre de succès
         end
      end
-     return success/100
+     return success/100 # on retourne la fraction de succès
 end
 
-println("Success rate = ", check_success(T, s))
+println("Success rate = ", check_success(T, s)) # on montre la fraction de succès des simulations stochastiques
 # # Discussion
 
 # On peut aussi citer des références dans le document `references.bib`,
