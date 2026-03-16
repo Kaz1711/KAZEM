@@ -86,7 +86,7 @@ end
 # ## States
 # ## ajouter un deuxième état de buisson pour avoior quatre états
 # ## Barren, Grass, Shrub_1, Shrub_2
-s = [175, 5, 10, 10] # un quatrième état de buisson est ajouté
+s = [150, 0, 25, 25] # un quatrième état de buisson est ajouté
 states = length(s)
 patches = sum(s)
 
@@ -95,8 +95,8 @@ patches = sum(s)
 T = zeros(Float64, states, states)
 T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide avec une petite chance de devenir herbe ou buisson
 T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe reste souvent herbe avec une chance de devenir vide ou buisson
-T[3, :] = [0.125, 0.01, 0.845, 0.02] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type
-T[4, :] = [0.125, 0.01, 0.02, 0.845] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type 
+T[3, :] = [0.13, 0.01, 0.84, 0.02] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type
+T[4, :] = [0.13, 0.01, 0.02, 0.84] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type 
 T
 
 println("Somme de chaque ligne :")
