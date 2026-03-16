@@ -25,7 +25,7 @@
 
 # # Présentation du modèle
 # Nous utilisons un modèle de transition décrivant l’évolution de l’état de parcelles de végétation au cours du temps. Chaque parcelle peut se trouver dans l’un 
-# des quatre états suivants : sol nu (barren), herbes (grasses), buisson de type 1 (shrub_1) ou buisson de type 2 (shrub_2). Les changements d’état entre les 
+# des quatre états suivants : sol nu (Barren), herbes (Grasses), buisson de type 1 (Shrub_1) ou buisson de type 2 (Shrub_2). Les changements d’état entre les 
 # générations sont décrits par une matrice de transition, dont les lignes correspondent de la parcelle à chaque génération et les colonnes à la probabilité de 
 # transition vers un autre état lors de la génération suivante. Les probabilités sont normalisées pour que la somme de chaque ligne soit égale à 1. Le modèle est 
 # simulé à la fois de façon déterministe et de façon stochastique. Dans le cas déterministe, les transitions sont calculées directement à partir des probabilités 
