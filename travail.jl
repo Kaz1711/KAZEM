@@ -85,7 +85,7 @@ end
 
 # ## States
 # ## Barren, Grass, Shrub_1, Shrub_2
-s = [160, 12, 14, 14]
+s = [175, 5, 10, 10]
 states = length(s)
 patches = sum(s)
 
