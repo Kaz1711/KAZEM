@@ -1,33 +1,51 @@
-# Dépôt modèle pour le cours BIO 2045
+# Simulation de la végétation d’un corridor sous ligne électrique
 
-<!-- Vous devrez supprimer les instructions, incluant ce commentaire -->
+Ce projet modélise l'évolution de la végétation dans un corridor sous ligne électrique à l’aide d’un modèle de transitions entre différents états de végétation. 
 
-⚠️ **Important**: Vous devrez mettre à jour le document `README.md`, pour enlever les instructions d'installation, et ajouter les informations pertinentes pour le projet
+Le corridor est représenté par des parcelles pouvant être dans quatre états :
+- sol nu (Barren)
+- herbes (Grasses)
+- buisson type 1 (Shrub_1)
+- buisson type 2 (Shrub_2)
 
-⚠️ **Important**: Vous devrez utiliser le document `travail.jl` pour écrire votre code / rapport, et **vous ne pouvez pas le renommer**
 
-ℹ️ **Information**: [Guide d'utilisation de markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+## Objectifs de gestion du corridor
 
-ℹ️ **Information**: Les références doivent aller dans le fichier `references.bib` au format bibtex, qui peut être généré par [Zotero](https://www.zotero.org/) ou [zoterobib](https://zbib.org/)
+Le modèle cherche à vérifier si les conditions suivantes peuvent être atteintes à l'équilibre :
+- 20 % des parcelles doivent être végétalisées et parmi elles : 
+  - 30 % doivent être des herbes
+  - 70 % doivent être des buissons
+    - le type de buisson le moins abondant doit représenter au moins 30 % des buissons.
 
-_Pour utiliser ce modèle, vous devez utiliser l'option "Use this template", puis "Create a new repository"_
+## Modèle
 
-![Capture d'écran de l'option "Utiliser ce modèle"](.assets/scrot-use-this-template.png)
+L’évolution du système est décrite par une matrice de transition entre les états de végétation.
+Chaque ligne représente l'état actuel d'une parcelle et chaque colonne la probabilité de transition vers un autre état à la génération suivante.
+Les probabilités sont normalisées pour que la somme de chaque ligne soitégale à 1.
 
-_Vous devrez ensuite vous assurer que l'option "Include all branches" est cochée, puis choisir le nom du dépôt, et vous assurer qu'il soit visible, avant de le publier_
+Deux types de simulations sont utilisés :
+- Déterministe : les transitions suivent directement les probabilités.
+- Stochastique : les transitions sont tirées aléatoirement à l’aide d’une distribution multinomiale.
 
-![Capture d'écran de la création du nouveau dépôt](.assets/scrot-pathway.png)
+## Structure du code
 
-_Une fois que le dépôt est créé, vous devrez ajouter quelques informations à votre dépôt_
+Fonctions principales :
+- `check_transition_matrix!` : vérifie que les probabilités de transition somment à 1
+- `check_function_arguments` : vérifie la cohérence des dimensions de la matrice
+- `_sim_stochastic!` : simulation stochastique avec distribution multinomiale
+- `_sim_determ!` : simulation déterministe
+- `simulation` : fonction principale qui exécute le modèle
+- `check_success` : évalue si les objectifs écologiques sont atteints
 
-![Capture d'écran de la création du nouveau dépôt](.assets/scrot-options.png)
+## Limites du modèle
 
-_Les informations doivent être les suivantes. Les tags `bio2045` et `h26-devoir2` (ou `h26-devoir3`) sont essentiels!_
+- il ne modélise pas l’influence de la densité de végétation
+- il ignore les perturbations environnementales
 
-![Capture d'écran de la création du nouveau dépôt](.assets/scrot-options.png)
+## Dépendances
 
-<!-- Vous devrez supprimer jusqu'à, et incluant ce commentaire -->
-
-## Organisation du projet
-
-## ETC
+Le projet utilise Julia
+Les packages suivants sont nécessaires :
+- CairoMakie
+- Distributions
+- Random
