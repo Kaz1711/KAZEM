@@ -181,6 +181,3 @@ Les simulations stochastiques montrent une variabilité autour de la trajectoire
 # car il ne prend pas en compte d’autres facteurs écologiques l'influence de l'abondance de la végétation sur la croissance des plantes ou encore les perturbations 
 # environnementales.
 
-# On peut aussi citer des références dans le document `references.bib`,
-# @ermentrout1993cellular -- la bibliographie sera ajoutée automatiquement à la
-# fin du document.
