@@ -42,7 +42,7 @@ Random.seed!(2045)
 # ## Fonctions
 # vérifier que la somme des probabilités est égale à 1
 function check_transition_matrix!(T)
-    # les valeurs sont normalisées si la somme des probabilités n'est pas égale à 1
+    ## les valeurs sont normalisées si la somme des probabilités n'est pas égale à 1
     for ligne in axes(T, 1)
         if sum(T[ligne, :]) != 1
             @warn "La somme de la ligne $(ligne) n'est pas égale à 1 et a été modifiée"
@@ -67,7 +67,7 @@ end
 # simulation stochastique
 function _sim_stochastic!(timeseries, transitions, generation)
     for state in axes(timeseries, 1)
-        # tirage aléatoire du nombre de transitions par état
+        ## tirage aléatoire du nombre de transitions par état
         pop_change = rand(Multinomial(timeseries[state, generation], transitions[state, :]))
         timeseries[:, generation+1] .+= pop_change
     end
@@ -85,14 +85,14 @@ function simulation(transitions, states; generations=500, stochastic=false)
     check_transition_matrix!(transitions)
     check_function_arguments(transitions, states)
 
-    # les parcelles sont entières si modèle déterministe et fractionnées si stochastique
+    ## les parcelles sont entières si modèle déterministe et fractionnées si stochastique
     _data_type = stochastic ? Int64 : Float32
     timeseries = zeros(_data_type, length(states), generations + 1)
     timeseries[:, 1] = states
 
-    # choix de la simulation
+    ## choix de la simulation
     _sim_function! = stochastic ? _sim_stochastic! : _sim_determ!
-    # calculer les générations suivantes
+    ## calculer les générations suivantes
     for generation in Base.OneTo(generations)
         _sim_function!(timeseries, transitions, generation)
     end
@@ -147,7 +147,7 @@ display(f)
 
 # ## Verifications de l'équilibre
 function check_success(T, s)
-    # obtenir une fraction de succès pour les simulations stochastiques
+    ## obtenir une fraction de succès pour les simulations stochastiques
     success = 0 
     for i in 1:100
         sim = simulation(T, s; stochastic=true, generations=200)
@@ -155,7 +155,7 @@ function check_success(T, s)
         vegetation = final[2] + final[3] + final[4] # quantité de végétation totale
         shrubs = final[3] + final[4] # quantité de buissons totale
         
-        # conditions pour que la simulation stochastique soit un succès
+        ## conditions pour que la simulation stochastique soit un succès
         cond1 = abs(vegetation-40) <= 5 # 20% de végétation 
         cond2 = abs(final[2] - 12) <= 5 # 6% d'herbe 
         cond3 = min(final[3], final[4]) >= 0.3*shrubs # 30% du buisson le moins abondant
