@@ -40,7 +40,9 @@ using Distributions
 import Random
 Random.seed!(2045)
 # ## Fonctions
+# vérifier que la somme des probabilités est égale à 1
 function check_transition_matrix!(T)
+    # les valeurs sont normalisées si la somme des probabilités n'est pas égale à 1
     for ligne in axes(T, 1)
         if sum(T[ligne, :]) != 1
             @warn "La somme de la ligne $(ligne) n'est pas égale à 1 et a été modifiée"
@@ -50,40 +52,47 @@ function check_transition_matrix!(T)
     return T
 end
 
+# vérifier que la matrice de transition est carrée et que le nombre d'états lui correspond
 function check_function_arguments(transitions, states)
     if size(transitions, 1) != size(transitions, 2)
         throw("La matrice de transition n'est pas carrée")
     end
 
     if size(transitions, 1) != length(states)
-        throw("Le nombre d'états ne correspond psa à la matrice de transition")
+        throw("Le nombre d'états ne correspond pas à la matrice de transition")
     end
     return nothing
 end
 
+# simulation stochastique
 function _sim_stochastic!(timeseries, transitions, generation)
     for state in axes(timeseries, 1)
+        # tirage aléatoire du nombre de transitions par état
         pop_change = rand(Multinomial(timeseries[state, generation], transitions[state, :]))
         timeseries[:, generation+1] .+= pop_change
     end
 end
 
+# simulation déterministe
 function _sim_determ!(timeseries, transitions, generation)
     pop_change = (timeseries[:, generation]' * transitions)'
     timeseries[:, generation+1] .= pop_change
 end
 
+# réaliser les simulations en vérifiant les paramètres de la matrice de transition
 function simulation(transitions, states; generations=500, stochastic=false)
 
     check_transition_matrix!(transitions)
     check_function_arguments(transitions, states)
 
+    # les parcelles sont entières si modèle déterministe et fractionnées si stochastique
     _data_type = stochastic ? Int64 : Float32
     timeseries = zeros(_data_type, length(states), generations + 1)
     timeseries[:, 1] = states
 
+    # choix de la simulation
     _sim_function! = stochastic ? _sim_stochastic! : _sim_determ!
-
+    # calculer les générations suivantes
     for generation in Base.OneTo(generations)
         _sim_function!(timeseries, transitions, generation)
     end
@@ -92,26 +101,25 @@ function simulation(transitions, states; generations=500, stochastic=false)
 end
 
 # ## States
-# ## ajouter un deuxième état de buisson pour avoior quatre états
 # ## Barren, Grass, Shrub_1, Shrub_2
-s = [150, 0, 25, 25] # un quatrième état de buisson est ajouté
+s = [150, 0, 25, 25] 
 states = length(s)
 patches = sum(s)
 
 # ## Transitions
 # ## ajouter un quatrième ligne et colonne pour la matrice de transition pour le deuxième type de buisson
 T = zeros(Float64, states, states)
-T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide avec une petite chance de devenir herbe ou buisson
-T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe reste souvent herbe avec une chance de devenir vide ou buisson
-T[3, :] = [0.13, 0.01, 0.84, 0.02] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type
-T[4, :] = [0.13, 0.01, 0.02, 0.84] # les buissons restent souvent des buissons avec une chance de devenir vide ou herbe ou se transformer en un autre type 
+T[1, :] = [0.97, 0.01, 0.01, 0.01] # vide reste souvent vide 
+T[2, :] = [0.11, 0.84, 0.02, 0.03] # herbe reste surtout herbe avec une chance de devenir vide 
+T[3, :] = [0.13, 0.01, 0.84, 0.02] # buissons restent souvent des buissons avec une chance de devenir vide 
+T[4, :] = [0.13, 0.01, 0.02, 0.84]  
 T
 
 println("Somme de chaque ligne :")
 println(sum(T, dims=2))
 
-states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"] # ajouter le nom du deuxième type de buisson
-states_colors = [:grey40, :orange, :teal, :blue] #ajouter une couleur pour le deuxième type de buisson
+states_names = ["Barren", "Grasses", "Shrub_1", "Shrub_2"] 
+states_colors = [:grey40, :orange, :teal, :blue]
 
 # ##Simulations et presentation des résultats
 
@@ -135,26 +143,27 @@ end
 
 axislegend(ax)
 tightlimits!(ax)
-display(f) # pour afficher la figure
+display(f)
 
 # ## Verifications de l'équilibre
 function check_success(T, s)
-    # on definit une fraction de succès pour les simulations stochastiques
+    # obtenir une fraction de succès pour les simulations stochastiques
     success = 0 
     for i in 1:100
         sim = simulation(T, s; stochastic=true, generations=200)
-        final = sim[:, end] # on regarde la composition du corridor à la fin de la simulation
-        vegetation = final[2] + final[3] + final[4] # on calcule la quantité de végétation totale
-        shrubs = final[3] + final[4] # on calcule la quantité de buissons totale
-        cond1 = abs(vegetation-40) <= 5 # on vérifie que la quantité de végétation est proche de 20% du corridor
-        cond2 = abs(final[2] - 12) <= 5 # on vérifie que la quantité d'herbe est proche de 6% du corridor
-        cond3 = min(final[3], final[4]) >= 0.3*shrubs # on vérifie que la variété de la moins abondante ne représente pas moins que 30% des buissons
-
-        if cond1 && cond2 && cond3 # si les trois conditions sont vérifiées, on considère que la simulation est un succès
-        success += 1 # on additionne 1 au nombre de succès
+        final = sim[:, end] 
+        vegetation = final[2] + final[3] + final[4] # quantité de végétation totale
+        shrubs = final[3] + final[4] # quantité de buissons totale
+        
+        # conditions pour que la simulation stochastique soit un succès
+        cond1 = abs(vegetation-40) <= 5 # 20% de végétation 
+        cond2 = abs(final[2] - 12) <= 5 # 6% d'herbe 
+        cond3 = min(final[3], final[4]) >= 0.3*shrubs # 30% du buisson le moins abondant
+        if cond1 && cond2 && cond3 
+        success += 1
         end
      end
-     return success/100 # on retourne la fraction de succès
+     return success/100 
 end
 
 println("Success rate = ", check_success(T, s)) # on montre la fraction de succès des simulations stochastiques
