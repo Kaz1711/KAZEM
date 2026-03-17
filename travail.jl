@@ -144,7 +144,6 @@ end
 axislegend(ax)
 tightlimits!(ax)
 display(f)
-save("travail-1.png", f) # sauvegarder la figure pour une utilisation dans le rapport 
 
 # ## Verifications de l'équilibre
 function check_success(T, s)
