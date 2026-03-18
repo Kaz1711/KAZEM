@@ -140,6 +140,11 @@ for i in eachindex(s)
     lines!(ax, det_sim[i, :], color=states_colors[i], alpha=1, label=states_names[i], linewidth=4)
 end
 
+# ## Proportions à l'équilibre
+final1 = det_sim[:,end]
+println("Barren" => final1[1]*100/200, "vegetation" => final1[2]*100/200 + final1[3]*100/200 + final1[4]*100/200, 
+"herbe/vegetation" => final1[2]*100/(final1[2]+final1[3]+final1[4]), "buissons/vegetation" => (final1[3]+final1[4])*100/(final1[2]+final1[3]+final1[4]), "buisson_least/vegetation" => min(final1[3], final1[4])*100/(final1[2]+final1[3]+final1[4]))
+
 
 axislegend(ax)
 tightlimits!(ax)
@@ -172,9 +177,9 @@ println("Success rate = ", check_success(T, s)) # on montre la fraction de succ�
 # simuler un aménagement du corridor sous une ligne électrique à haute tension. Nos résultats montrent que le système atteint un équilibre relativement 
 # rapidement, après environ 15 générations. Nous avons réussi à simuler une gestion du corridor qui vise à limiter la croissance de végétation dense sous la ligne 
 # électrique en obtenant une majorité des parcelles vides à l'équilibre. Une proportion plus faible de parcelles est occupée par de la végétation, l’herbe et les 
-# buissons. Les proportions observées à l’équilibre respectent globalement les objectifs du mandat, soit 19,92 % de parcelles végétalisées, dont 29,52 % d’herbes 
-# et 70,48 % de buissons. En revanche, nous n'avons pas obtenu les bonnes proportions relatives des buissons. Celles-ci étaient relativement proches, le buisson 
-# le moins important représentant 48,80 % des parcelles occupées par les buissons. 
+# buissons. Les proportions observées à l’équilibre respectent globalement les objectifs du mandat, soit 19,48 % de parcelles végétalisées, dont 30.18 % d’herbes 
+# et 69.81 % de buissons. En revanche, nous n'avons pas obtenu les bonnes proportions relatives des buissons. Celles-ci étaient relativement proches, le buisson 
+# le moins important représentant 34.06 % des parcelles occupées par les buissons. 
 # Les simulations stochastiques montrent une variabilité autour de la trajectoire déterministe car elles reflètent le caractère aléatoire des transitions entre 
 # états dans un système écologique réel. Malgré cela, les proportions à l'équilibre restent relativement stables, indiquant que la stratégie de plantation et la 
 # matrice de transition choisies permettent d’atteindre un équilibre satisfaisant entre biodiversité et gestion du corridor. Ce modèle reste néanmoins simpliste 
